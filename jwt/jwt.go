@@ -1,4 +1,4 @@
-package webutility
+package jwtutility
 
 import (
 	"crypto/rand"
@@ -9,11 +9,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/dgrijalva/jwt-go"
+	jwt "github.com/dgrijalva/jwt-go"
 )
-
-var _issuer = "webutility"
-var _secret = "webutility"
 
 // TokenClaims are JWT token claims.
 type TokenClaims struct {
@@ -24,15 +21,8 @@ type TokenClaims struct {
 	Token     string `json:"access_token"`
 	TokenType string `json:"token_type"`
 	Username  string `json:"username"`
-	RoleName  string `json:"role"`
-	RoleID    int64  `json:"role_id"`
+	Role      string `json:"role"`
 	ExpiresIn int64  `json:"expires_in"`
-}
-
-// InitJWT ...
-func InitJWT(issuer, secret string) {
-	_issuer = issuer
-	_secret = secret
 }
 
 // ValidateHash hashes pass and salt and returns comparison result with resultHash
@@ -79,25 +69,24 @@ func CreateHash(str, presalt string) (hash, salt string, err error) {
 	return hash, salt, nil
 }
 
-// CreateAuthToken returns JWT token with encoded username, role, expiration date and issuer claims.
+// NewToken returns JWT token with encoded username, role, expiration date and issuer claims.
 // It returns an error if it fails.
-func CreateAuthToken(username string, roleName string, roleID int64) (TokenClaims, error) {
+func NewToken(username, role, issuer, secret string) (TokenClaims, error) {
 	t0 := (time.Now()).Unix()
 	t1 := (time.Now().Add(time.Hour * 24 * 7)).Unix()
 	claims := TokenClaims{
 		TokenType: "Bearer",
 		Username:  username,
-		RoleName:  roleName,
-		RoleID:    roleID,
+		Role:      role,
 		ExpiresIn: t1 - t0,
 	}
 	// initialize jwt.StandardClaims fields (anonymous struct)
 	claims.IssuedAt = t0
 	claims.ExpiresAt = t1
-	claims.Issuer = _issuer
+	claims.Issuer = issuer
 
 	jwtToken := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	token, err := jwtToken.SignedString([]byte(_secret))
+	token, err := jwtToken.SignedString([]byte(secret))
 	if err != nil {
 		return TokenClaims{}, err
 	}
@@ -107,8 +96,9 @@ func CreateAuthToken(username string, roleName string, roleID int64) (TokenClaim
 
 // RefreshAuthToken returns new JWT token with same claims contained in tok but with prolonged expiration date.
 // It returns an error if it fails.
-func RefreshAuthToken(tok string) (TokenClaims, error) {
-	token, err := jwt.ParseWithClaims(tok, &TokenClaims{}, secretFunc)
+func RefreshToken(tok, issuer, secret string) (TokenClaims, error) {
+
+	token, err := jwt.ParseWithClaims(tok, &TokenClaims{}, secretFunc(secret))
 	if err != nil {
 		if validation, ok := err.(*jwt.ValidationError); ok {
 			// don't return error if token is expired, just extend it
@@ -127,13 +117,13 @@ func RefreshAuthToken(tok string) (TokenClaims, error) {
 	}
 
 	// extend token expiration date
-	return CreateAuthToken(claims.Username, claims.RoleName, claims.RoleID)
+	return NewToken(claims.Username, claims.Role, issuer, secret)
 }
 
 // AuthCheck ...
-func AuthCheck(req *http.Request, roles string) (*TokenClaims, error) {
+func AuthCheck(req *http.Request, roles, secret string) (*TokenClaims, error) {
 	// validate token and check expiration date
-	claims, err := GetTokenClaims(req)
+	claims, err := GetTokenClaims(req, secret)
 	if err != nil {
 		return claims, err
 	}
@@ -154,7 +144,7 @@ func AuthCheck(req *http.Request, roles string) (*TokenClaims, error) {
 	parts := strings.Split(roles, ",")
 	for i := range parts {
 		r := strings.Trim(parts[i], " ")
-		if claims.RoleName == r {
+		if claims.Role == r {
 			return claims, nil
 		}
 	}
@@ -164,7 +154,7 @@ func AuthCheck(req *http.Request, roles string) (*TokenClaims, error) {
 
 // GetTokenClaims extracts JWT claims from Authorization header of req.
 // Returns token claims or an error.
-func GetTokenClaims(req *http.Request) (*TokenClaims, error) {
+func GetTokenClaims(req *http.Request, secret string) (*TokenClaims, error) {
 	// check for and strip 'Bearer' prefix
 	var tokstr string
 	authHead := req.Header.Get("Authorization")
@@ -174,7 +164,7 @@ func GetTokenClaims(req *http.Request) (*TokenClaims, error) {
 		return &TokenClaims{}, errors.New("authorization header is incomplete")
 	}
 
-	token, err := jwt.ParseWithClaims(tokstr, &TokenClaims{}, secretFunc)
+	token, err := jwt.ParseWithClaims(tokstr, &TokenClaims{}, secretFunc(secret))
 	if err != nil {
 		return &TokenClaims{}, err
 	}
@@ -188,12 +178,8 @@ func GetTokenClaims(req *http.Request) (*TokenClaims, error) {
 	return claims, nil
 }
 
-func DecodeJWT(secret, token string) (*TokenClaims, error) {
-	secretfunc := func(*jwt.Token) (interface{}, error) {
-		return []byte(secret), nil
-	}
-
-	tok, err := jwt.ParseWithClaims(token, &TokenClaims{}, secretfunc)
+func DecodeToken(secret, token string) (*TokenClaims, error) {
+	tok, err := jwt.ParseWithClaims(token, &TokenClaims{}, secretFunc(secret))
 	if err != nil {
 		if validation, ok := err.(*jwt.ValidationError); ok {
 			// don't return error if token is expired
@@ -229,7 +215,8 @@ func randomSalt() (s string, err error) {
 	return s, nil
 }
 
-// secretFunc returns byte slice of API secret keyword.
-func secretFunc(token *jwt.Token) (interface{}, error) {
-	return []byte(_secret), nil
+func secretFunc(secret string) func(*jwt.Token) (interface{}, error) {
+	return func(token *jwt.Token) (interface{}, error) {
+		return []byte(secret), nil
+	}
 }

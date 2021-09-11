@@ -1,0 +1,6 @@
+git.to-net.rs/marko.tikvic/webutility v0.0.0-20201026112430-ed367ddd1597 h1:9Fc/4j+fVJ63+WK3ZPzjoSi8XkTFkzqSec4h5NwJUMY=
+git.to-net.rs/marko.tikvic/webutility v0.0.0-20201026112430-ed367ddd1597/go.mod h1:10+oFF+RzcVDxSup4KTzw5Ox+vUIuRr5uJtNnZgrbts=
+github.com/dgrijalva/jwt-go v3.2.0+incompatible h1:7qlOGliEKZXTDg6OTjfoBKDXWrumCAMpl/TFQ4/5kLM=
+github.com/dgrijalva/jwt-go v3.2.0+incompatible/go.mod h1:E3ru+11k8xSBh+hMPgOLZmtrrCbhqsmaPHjLKYnJCaQ=
+github.com/gorilla/mux v1.8.0 h1:i40aqfkR1h2SlN9hojwV5ZA91wcXFOvkdNIeFDP5koI=
+github.com/gorilla/mux v1.8.0/go.mod h1:DVbg23sWSpFRCP0SfiEN6jmj59UnW/n46BH5rLB71So=

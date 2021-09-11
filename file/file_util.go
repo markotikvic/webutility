@@ -1,4 +1,4 @@
-package webutility
+package fileutility
 
 import (
 	"bytes"

@@ -1,7 +1,7 @@
 package webutility
 
 // Diff ...
-func Diff(old, new []int64) (added, removed []int64) {
+func DiffInt64(old, new []int64) (added, removed []int64) {
 	for i := range old {
 		isRemoved := true
 		for j := range new {

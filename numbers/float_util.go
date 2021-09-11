@@ -1,4 +1,4 @@
-package webutility
+package numbersutility
 
 import (
 	"fmt"
@@ -12,20 +12,20 @@ func RoundFloat64(f float64, dec int) float64 {
 	return math.Round(f*p) / p
 }
 
-func NewBF(f float64, prec uint) *big.Float {
+func NewBigFloat(f float64, prec uint) *big.Float {
 	x := big.NewFloat(f)
 	x.SetPrec(prec)
 	return x
 }
 
-func AddBF(x, y *big.Float) *big.Float {
+func AddBigFloat(x, y *big.Float) *big.Float {
 	z := big.NewFloat(0.0)
 	z.SetPrec(x.Prec())
 	z.Add(x, y)
 	return z
 }
 
-func SubBF(x, y *big.Float) *big.Float {
+func SubBigFloat(x, y *big.Float) *big.Float {
 	z := big.NewFloat(0.0)
 	z.SetPrec(x.Prec())
 
@@ -36,21 +36,21 @@ func SubBF(x, y *big.Float) *big.Float {
 	return z
 }
 
-func MulBF(x, y *big.Float) *big.Float {
+func MulBigFloat(x, y *big.Float) *big.Float {
 	z := big.NewFloat(0.0)
 	z.SetPrec(x.Prec())
 	z.Mul(x, y)
 	return z
 }
 
-func DivBF(x, y *big.Float) *big.Float {
+func DivBigFloat(x, y *big.Float) *big.Float {
 	z := big.NewFloat(0.0)
 	z.SetPrec(x.Prec())
 	z.Quo(x, y)
 	return z
 }
 
-func BFtoFloat(f *big.Float) float64 {
+func BigFloattoFloat(f *big.Float) float64 {
 	v, _ := f.Float64()
 	return v
 }
@@ -66,18 +66,13 @@ func Float64PtrToString(f *float64) string {
 	return fmt.Sprintf("%.2f", *f)
 }
 
-func FormatFloat64Number(f float64, dec int) string {
+func FormatFloat64(f float64, dec int) string {
 	res := ""
-
 	f = RoundFloat64(f, dec)
-
 	i := int64(f)
-
 	format := fmt.Sprintf("%%.%df", dec)
 	parts := strings.Split(fmt.Sprintf(format, f-float64(i)), ".")
-
 	decimals := parts[1]
-
 	res = FormatInt64Number(i) + "," + decimals
 
 	return res

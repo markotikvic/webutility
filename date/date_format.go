@@ -1,7 +1,6 @@
-package webutility
+package dateutility
 
 import (
-	"fmt"
 	"time"
 )
 
@@ -49,30 +48,4 @@ func DatePtrToUnixPtr(date interface{}) *int64 {
 
 	}
 	return nil
-}
-
-// EqualQuotes encapsulates given string in SQL 'equal' statement and returns result.
-// Example: "hello" -> " = 'hello'"
-func EqualQuotes(stmt string) string {
-	if stmt != "" {
-		stmt = fmt.Sprintf(" = '%s'", stmt)
-	}
-	return stmt
-}
-
-// EqualString ...
-func EqualString(stmt string) string {
-	if stmt != "" {
-		stmt = fmt.Sprintf(" = %s", stmt)
-	}
-	return stmt
-}
-
-// LikeQuotes encapsulates given string in SQL 'like' statement and returns result.
-// Example: "hello" -> " LIKE UPPER('%hello%')"
-func LikeQuotes(stmt string) string {
-	if stmt != "" {
-		stmt = fmt.Sprintf(" LIKE UPPER('%s%s%s')", "%", stmt, "%")
-	}
-	return stmt
 }

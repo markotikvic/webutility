@@ -47,7 +47,7 @@ func (s *Server) Run() {
 	s.Logger.PrintAndTrace(http.ListenAndServe(s.Port, s.Router).Error())
 }
 
-func (s *Server) Cleanup() {
+func (s *Server) Close() {
 	if s.DB != nil {
 		s.DB.Close()
 	}

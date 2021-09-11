@@ -1,4 +1,4 @@
-package webutility
+package email
 
 // TODO(markO): test test test test test (and open source?)
 

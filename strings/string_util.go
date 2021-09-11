@@ -1,4 +1,4 @@
-package webutility
+package stringutility
 
 import (
 	"fmt"
@@ -50,12 +50,12 @@ func Int64SliceToString(arr []int64) (s string) {
 }
 
 // CombineStrings ...
-func CombineStrings(s1, s2, s3 string) string {
+func CombineStrings(s1, s2, glue string) string {
 	s1 = strings.TrimSpace(s1)
 	s2 = strings.TrimSpace(s2)
 
 	if s1 != "" && s2 != "" {
-		s1 += s3 + s2
+		s1 += glue + s2
 	} else {
 		s1 += s2
 	}

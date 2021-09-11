@@ -1,4 +1,4 @@
-package webutility
+package nullables
 
 import (
 	"database/sql"
@@ -6,6 +6,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"time"
+
+	date "markotikvic/webutility/dateutility"
 )
 
 // NullBool is a wrapper for sql.NullBool with added JSON (un)marshalling
@@ -447,7 +449,7 @@ func (nd *NullDate) Format(f string) string {
 		return ""
 	}
 
-	return EpochToDate(nd.Time.Unix(), f)
+	return date.EpochToDate(nd.Time.Unix(), f)
 }
 
 func parseSQLDate(str string, loc *time.Location) (t time.Time, err error) {

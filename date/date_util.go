@@ -1,4 +1,4 @@
-package webutility
+package dateutility
 
 import (
 	"fmt"

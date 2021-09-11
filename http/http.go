@@ -1,4 +1,4 @@
-package webutility
+package httputility
 
 import (
 	"encoding/json"

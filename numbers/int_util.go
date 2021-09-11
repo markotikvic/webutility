@@ -1,4 +1,4 @@
-package webutility
+package numbersutility
 
 import (
 	"fmt"
@@ -66,9 +66,8 @@ func MinInt64(vars ...int64) (min int64) {
 	return min
 }
 
-func FormatInt64Number(i int64) string {
+func FormatInt64(i int64) string {
 	res := ""
-
 	for i >= 1000 {
 		rem := i % 1000
 		i = i / 1000

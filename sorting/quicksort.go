@@ -1,4 +1,4 @@
-package webutility
+package sorting
 
 import "sort"
 

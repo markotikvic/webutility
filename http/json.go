@@ -1,4 +1,4 @@
-package webutility
+package httputility
 
 // TODO(marko): If DecodeJSON() returns io.EOF treat it as if there is no response body, since response content length can sometimes be -1.
 
